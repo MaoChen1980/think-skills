@@ -1,143 +1,123 @@
 ---
 name: debug-root-cause
 description: >
-  Trigger when any tool returns an error, you encounter unexpected
-  behavior, debugging stalls, or you're starting a new investigation
-  and want a systematic approach. Use before diving into random grepping.
+  Run this when any tool returns an error, debugging stalls,
+  or you're starting a new investigation.
+  Replaces random exploration with systematic RCA methodology.
+  Choose 1-3 methods from 20 and apply step by step.
 ---
 
 # Debug Root Cause — Systematic Investigation Methodology
 
-When something goes wrong, the instinct is to grep around and try things.
-This skill replaces random exploration with a structured approach: pick the
-right root-cause analysis method for your situation and apply it step by step.
+## Action
 
-## When to Use
+Write the problem definition + selected method to a temp file, read it
+back, then execute the investigation.
 
-- **Any tool returns an error or unexpected result**
-- **You see an error and need to figure out how to approach it**
-- **You tried a few things but kept hitting dead ends**
-- **You're about to start investigating** — stop first, get a methodology
-- **You have a complex bug with multiple possible causes**
+1. Define the problem in writing
+2. Select 1-3 methods from the 20-method catalog below
+3. Write problem + method + plan to a temp file
+4. Read it back
+5. Execute the plan step by step
 
-## Steps
+## Phase 1: Define the Problem
 
-### Phase 1: Define the Problem
-
-Write a one-paragraph problem statement:
+Write to `/tmp/debug-rca.md`:
 
 ```
 ## Problem
-What: <what happened — error message, unexpected behavior>
-Expected: <what should have happened instead>
-Frequency: <always / intermittent / specific conditions>
-Impact: <what broke — failed test, production issue, compilation error>
+What: <error message / unexpected behavior>
+Expected: <what should happen>
+Frequency: <always / intermittent / conditions>
+Impact: <what broke>
 ```
 
-### Phase 2: Select Investigation Methods
+Deailed reference: [RCA Methods Reference](references/rca-methods.md)
 
-Read the [RCA Methods Reference](references/rca-methods.md) and pick 1-3
-methods that fit your situation. General guidance:
+## Phase 2: Select Methods
+
+Pick 1-3 methods based on your situation:
 
 | Situation | Best Methods |
 |-----------|-------------|
-| **Unknown cause, lots of variables** | Divide & Conquer, Single Variable |
-| **Regression (used to work)** | Rollback, Comparison |
-| **Intermittent failure** | Reproduction, Wait & Observe |
-| **Error message points somewhere** | Reverse Inference, Chain Tracing |
-| **Complex system, many layers** | Layer Stripping, Elimination |
-| **Data looks wrong** | Look Inside, Boundary Testing |
-| **Need to understand unknown code** | Log Injection, Time Travel |
-| **Can't find the pattern** | Outlier Analysis, Hypothesis Testing |
+| Unknown cause, many variables | Divide & Conquer, Single Variable |
+| Regression (used to work) | Rollback, Comparison |
+| Intermittent failure | Reproduction, Wait & Observe |
+| Error message points somewhere | Reverse Inference, Chain Tracing |
+| Complex system, many layers | Layer Stripping, Elimination |
+| Data looks wrong | Look Inside, Boundary Testing |
+| Need to understand unknown code | Log Injection, Time Travel |
+| Can't find the pattern | Outlier Analysis, Hypothesis Testing |
 
-Pick methods based on which dimension of the problem is most opaque to you.
+### Method Catalog
 
-### Phase 3: Apply the Method
+**1. 分解法 (Divide & Conquer)** — Split the problem space into halves. Test which half contains the bug. Recurse on the failing half.
 
-For each selected method, follow its discipline:
+**2. 对比法 (Comparison)** — Compare working vs failing case. What differs? Environment, input, config, state, timing?
 
-**Divide & Conquer**: Split the problem space into independent halves.
-Test which half contains the bug. Recurse on the failing half.
+**3. 回退法 (Rollback)** — Revert to known-good state. Re-apply changes one by one. Which change reintroduces the problem?
 
-**Comparison**: Compare a working case vs failing case. What differs?
-Environment, input, config, state, timing?
+**4. 假设法 (Hypothesis Testing)** — "If X is true then Y should happen when I Z." Predict, test, confirm or refute.
 
-**Rollback**: Revert to a known-good state. Re-apply changes one by one.
-Which change reintroduces the problem?
+**5. 逆推法 (Reverse Inference)** — Start at the failure. Trace backward: what had to be true just before? Before that?
 
-**Hypothesis Testing**: State "If X is true, then Y should happen when I Z."
-Predict, test, confirm or refute. One variable at a time.
+**6. 尝试法 (Trial & Error)** — When the search space is small and each attempt is fast. Rapid iteration.
 
-**Reverse Inference**: Start at the failure. Trace backward: what had to
-be true just before? What had to be true before that?
+**7. 透视法 (Look Inside)** — Don't trust the surface. Inspect internal state: logs, dumps, debuggers, intermediate values.
 
-**Look Inside**: Don't trust the surface output. Inspect internal state:
-logs, metrics, dumps, debuggers, intermediate values.
+**8. 单变量法 (Single Variable)** — Change exactly one factor between tests. Isolate the variable.
 
-**Single Variable**: Change exactly one factor between tests. Isolate
-which variable causes the change.
+**9. 边界法 (Boundary Testing)** — Test edge values: empty, null, zero, max, min, overflow.
 
-**Boundary Testing**: Test edge values: empty, null, zero, max, min,
-overflow. Most bugs live at boundaries.
+**10. 复现法 (Reproduction)** — Find minimal reliable steps to reproduce. Can't fix what you can't reproduce.
 
-**Reproduction**: Find the minimal steps to reproduce reliably. A bug
-you can't reproduce, you can't fix.
+**11. 排除法 (Elimination)** — Disable/remove parts. When the problem goes away, the last removed thing is related.
 
-**Elimination**: Disable/remove parts of the system. Does the problem go
-away? When it does, the last thing you removed is related.
+**12. 置换法 (Substitution)** — Replace suspicious component with known-good one. Does the problem follow the component or stay?
 
-**Substitution**: Replace a suspicious component with a known-good one.
-Does the problem follow the component or stay?
+**13. 依赖链追溯 (Chain Tracing)** — Walk the full dependency chain. The bug is often not where the symptom appears.
 
-**Chain Tracing**: Walk the full dependency chain. The bug is often not
-where the symptom appears.
+**14. 日志注入法 (Log Injection)** — Add targeted logging at decision points. What path does execution actually take?
 
-**Log Injection**: Add targeted logging at decision points. What path
-does execution actually take?
+**15. 时间回溯法 (Time Travel)** — What changed right before the problem? Config deploy? Data update? Dependency release?
 
-**Time Travel**: Compare timestamps. What changed right before the
-problem started? Config deploy? Data update? Dependency release?
+**16. 静候法 (Wait & Observe)** — For intermittent problems with long cycles. Extend observation.
 
-**Wait & Observe**: For intermittent problems, extend observation.
-Sometimes you need to see the cycle.
+**17. 分层剥离法 (Layer Stripping)** — Bypass outer layers, test the core directly. Add layers back until failure appears.
 
-**Layer Stripping**: Bypass outer layers, test the core directly. Does
-the raw API work? Is it an integration issue?
+**18. 离群分析 (Outlier Analysis)** — What's special about failing cases vs passing ones? Common thread?
 
-**Outlier Analysis**: What's special about the failing cases vs passing
-ones? Common pattern in the differences?
+**19. 强制失败法 (Force Failure)** — Deliberately induce the failure condition. Verify understanding by making it happen on demand.
 
-**Force Failure**: Deliberately induce the failure condition. Verify
-your understanding by making it happen on demand.
+**20. 橡皮鸭法 (Rubber Ducking)** — Explain the problem to an imaginary colleague. The act of structuring reveals the answer.
 
-**Peer Review / Rubber Ducking**: Explain the problem aloud (or in
-writing) to an imaginary colleague. The act of structuring the
-explanation often reveals the answer.
+Append to the file:
 
-### Phase 4: Execute and Iterate
+```
+## Method
+Selected: <method name>
+Rationale: <why this method fits>
+Plan: <specific steps>
+```
 
-1. Start with your top-ranked method
-2. Execute one investigation step
-3. Record what you learned
-4. If no progress, switch to the next method
-5. If making progress, continue deepening with the current method
+## Phase 3: Execute
 
-## Verification
+After reading the file back, follow the plan:
 
-- Problem is defined in writing before any investigation starts
-- Selected methods have a clear rationale ("because the bug is intermittent, I'll use Reproduction + Hypothesis Testing")
-- Each investigation step produces a clear outcome (confirmed/refuted a hypothesis, narrowed the scope, found the root cause)
-- Root cause is identified and fix is verified before reporting done
+1. Execute one investigation step
+2. Record what you learned
+3. Update the file with findings
+4. Continue or switch method if stuck
 
 ## Pitfalls
 
-- **Don't skip Phase 1** — writing down the problem forces precision. A vague problem statement produces vague investigation
-- **Don't try all methods** — pick 1-3 and go deep. Method-hopping is a form of panic
-- **Confirmation bias is the #1 trap** — actively try to *disprove* your hypothesis, not confirm it
-- **The symptom is not the cause** — "null pointer exception" is a symptom, the cause might be upstream data quality or a race condition
-- **If stuck after 2 methods** — step back and re-read Phase 1. Your problem definition might be wrong
-- **For external users**: This skill provides methodology only. You decide which tools to use for actual investigation. The skill won't run commands for you.
+- Write the problem BEFORE investigating — vague problem = vague debugging
+- Pick 1-3 methods and go deep — method-hopping is panic
+- Actively try to disprove your hypothesis, not confirm it
+- The symptom is not the cause ("null pointer" is a symptom, not root cause)
+- If stuck after 2 methods, your problem definition is probably wrong — redo Phase 1
 
 ---
 
-**Self-optimization**: After using this skill, improve it based on what you learned — fix bugs, simplify steps, add edge cases, enhance verification.
+**Source**: https://github.com/MaoChen1980/think-skills
+**Self-optimization**: After using this skill, improve it based on what you learned.

@@ -1,90 +1,74 @@
 ---
 name: assess-me
 description: >
-  Trigger when debugging goes in circles, results are confusing,
-  multiple hypotheses exist, or you need a sanity check on your direction.
-  Use before expensive operations, after repeated failures, or when
-  you feel like you're guessing.
+  Run this when debugging goes in circles, results are confusing,
+  multiple hypotheses exist, or you need a sanity check.
+  Audits your cognition state: goal, progress, gaps, assumptions,
+  blocker, and recovery path.
 ---
 
 # Assess Me — Self-Cognition Audit
 
-A structured self-assessment protocol. You review your own conversation
-context (which you already have) against a fixed set of cognition questions.
-The result is a compact status snapshot that catches blind spots,
-unverified assumptions, and wasted directions.
+## Action
 
-## When to Use
+Write your current thinking state to a temp file, then read it back.
 
-- **Going in circles** — same error, different attempts, no progress
-- **Confusing results** — a tool returned something unexpected
-- **Multiple hypotheses** — competing explanations, not sure which to pursue
-- **Before expensive operations** — about to grep/read/write your way through a large codebase
-- **Feeling uncertain** — you sense you might be missing something but can't name it
-- **Periodic checkpoint** — every 5-10 turns on complex tasks
+1. Answer 6 questions and write to a temp file
+2. Read it back
+3. Critically analyze what you wrote
+4. Continue based on the findings
 
-## Steps
+## Questions
 
-### Phase 1: Self-Review
+1. **Goal** — What is the task? What does "done" look like?
+2. **Progress** — What's done? What's pending?
+3. **Gaps** — What information do you need but don't have?
+4. **Assumptions** — What unverified beliefs are driving your approach?
+5. **Blocker** — What specifically is blocking you? (exact obstacle, not symptom)
+6. **Recovery** — If stuck, what should you do differently?
 
-Review what you know about the current situation. Answer these six questions
-based on your working memory of the conversation:
+## Instructions
 
-1. **Goal** — What is the task? What priority? What does "done" look like?
-2. **Progress** — What's done? What's pending? Are you ahead or behind where you expected?
-3. **Gaps** — What information do you need but don't have yet? What files haven't you checked?
-4. **Assumptions** — What unverified beliefs are driving your current approach? Call these out explicitly — assumptions are the most common blind spot.
-5. **Blocker** — Are you stuck? If so, what specifically is blocking you? Name the exact obstacle, not a symptom.
-6. **Recovery** — If stuck, what should you do differently on the next attempt? Be specific.
+```
+Write tool → /tmp/assess-me.md
+Content:
+# Assess Me
 
-> **Tip**: If you can't answer one of these, that itself is useful information —
-> it means you haven't been tracking that dimension.
+**Goal:** <1-2 sentences>
+**Progress:** <1-2 sentences>
+**Gaps:** <1-2 sentences>
+**Assumptions:** <1-2 sentences>
+**Blocker:** <1-2 sentences>
+**Recovery:** <1-2 sentences>
+```
 
-### Phase 2: Critical Analysis
+After writing, use Read tool to read `/tmp/assess-me.md` back. Then review critically:
 
-Re-read your answers from Phase 1 as if a colleague wrote them. Look for:
+- Is "progress" just restating effort without results?
+- Are blockers specific or vague?
+- Is "Recovery" a concrete action, or just "keep trying"?
+- Are you assuming something without evidence?
 
-- **Circular reasoning** — is your "progress" description just restating efforts without results?
-- **Vague blockers** — "the API doesn't work" vs "the POST /users endpoint returns 403 with this exact payload"
-- **Missing gaps** — if you listed no gaps, you're probably missing some
-- **Wishful assumptions** — "this should work" without evidence
-- **Confirmation bias** — are you only looking for evidence that supports your current theory?
+## Pitfalls
 
-Revise any items that fail this critique.
+- Assumptions section must NOT be empty — there are always assumptions
+- Recovery ≠ "keep trying" — name a specific next action
+- Vague blocker = you haven't found it yet
+- Read the file back — writing without re-reading skips the detachment effect
 
-### Phase 3: Output
+## Output Convention
 
-Write the assessment as a structured block in your response:
+When done, summarize findings inline:
 
 ```
 [assess]
 Goal: ...
-Progress: ...
-Gaps: ...
-Assumptions: ...
 Blocker: ...
-Recovery: ...
+Next: ...
 [/assess]
 ```
 
-Keep each section to 1-2 sentences. No fluff. The point is to externalize
-your thinking so you (and the model) can see it clearly.
-
-## Verification
-
-- All 6 sections are filled (use "N/A" if genuinely not applicable)
-- Assumptions section is not empty — there are always assumptions
-- Recovery says more than "keep trying" if there's a blocker
-- The output is surrounded by `[assess]...[/assess]` tags for clear delimitation
-
-## Pitfalls
-
-- **Don't skip Phase 2** — the critical re-read is where most value comes from
-- **Don't inflate** — if nothing is blocked, say "N/A" for Blocker. If progress is obvious, keep it brief
-- **Assumptions are not facts** — if you caught yourself thinking "this should work", that's an assumption until verified
-- **Gaps vs Assumptions** — gaps are information you *know* you lack; assumptions are things you *believe* without evidence. They overlap, but the distinction matters
-- **Recovery is not a wish** — it should be a concrete next action, not "figure out X"
-
 ---
 
-**Self-optimization**: After using this skill, improve it based on what you learned — fix bugs, simplify steps, add edge cases, enhance verification.
+**Source**: https://github.com/MaoChen1980/think-skills
+**Self-optimization**: After using this skill, improve it based on what you learned.
